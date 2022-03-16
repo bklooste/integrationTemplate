@@ -8,7 +8,7 @@ internal class TransformMicroService
     }
 
     // represents http call
-    internal string GetTransformedBody(string templateName, JObject jsonBody, JObject metaData)
+    internal JObject GetTransformedBody(string templateName, JObject jsonBody, JObject metaData)
     {
         var result = new JObject();
         var fields = jsonBody.Values().Concat(metaData.Values()).ToDictionary(x=> x.Path);
@@ -25,7 +25,7 @@ internal class TransformMicroService
             result.Add(toPath, value);  
         }
 
-        return result.ToString();
+        return result;
     }
 
     // many ways to template /  transform

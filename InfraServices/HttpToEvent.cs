@@ -1,12 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace IntegrationDemo.InfraServices
+﻿namespace IntegrationDemo.InfraServices
 {
-
 
     // Aready doing this 
     //TODO put in web host note it swallows all 
@@ -21,6 +14,7 @@ namespace IntegrationDemo.InfraServices
         {
             if (request.RequestUri.ToString().Contains("integration-api"))
             {
+                //TODO add offset uri to meta data as type
                 await fireSNSEvent.Fire(request);
             }
             else

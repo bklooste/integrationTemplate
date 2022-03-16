@@ -28,7 +28,7 @@ internal class TransfromAndCallMicroService
             Headers = {
                 { HttpRequestHeader.Authorization.ToString(), security },
             },
-            Content = new StringContent(body, Encoding.UTF8, "application/json")
+            Content = new StringContent(body.ToString(), Encoding.UTF8, "application/json")
         };
 
         var response = httpClient.SendAsync(httpRequestMessage).Result;

@@ -23,11 +23,11 @@ internal class ConfigIntegrationMicroService
     }
 
     // Can do this in batches if we want high performance 
-    internal void Process((JObject jsonBody, JObject metaData, string messageType           ) policyUpdated)
+    internal void Process(JObject jsonBody, JObject metaData, string msgType)
     {
         // important config is sequential 
         foreach ( var config in config.GetChildren())
-            ProcessConfig(policyUpdated.jsonBody, policyUpdated.metaData, config["templateName"], config["security"]);
+            ProcessConfig(jsonBody, metaData, config["templateName"], config["security"]);
     }
 
     private void ProcessConfig(JObject jsonBody, JObject metaData, string templateName, string security)

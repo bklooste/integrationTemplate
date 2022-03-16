@@ -19,21 +19,21 @@ internal class CGUIntegrationMicroService
     {
     }
 
-    internal void Process((JObject jsonBody, JObject metaData, string msgType) policyUpdated)
+    internal void Process(JObject jsonBody, JObject metaData, string msgType)
     {
-        switch (policyUpdated.msgType)
+        switch (msgType)
         {
             case "QuoteRequest":
-                QuoteRequest(policyUpdated.jsonBody, policyUpdated.metaData);
+                QuoteRequest(jsonBody, metaData);
                 break;
             case "QuoteResponse":
-                QuoteResponse(policyUpdated.jsonBody, policyUpdated.metaData);
+                QuoteResponse(jsonBody, metaData);
                 break;
             case "BindRequest":
-                BindRequest(policyUpdated.jsonBody, policyUpdated.metaData);
+                BindRequest(jsonBody, metaData);
                 break;
             case "BindResponse":
-                QuoteRequest(policyUpdated.jsonBody, policyUpdated.metaData);
+                BindResponse(jsonBody, metaData);
                 break;
             default:
                 break;
@@ -46,7 +46,7 @@ internal class CGUIntegrationMicroService
         jsonBody["QuoteId"] = storedData["QuoteID"].ToString();
         var json = transformService.GetTransformedBody("quoteReesponseToMsg", jsonBody, metaData);
 
-        fireSNSEvent.Fire( JObject.Parse(json), "QuoteUpdated");
+        fireSNSEvent.Fire( json, "QuoteUpdated");
     }
 
     private void QuoteRequest(JObject jsonBody, JObject metaData)
@@ -77,6 +77,19 @@ internal class CGUIntegrationMicroService
         //  sequential 1 message can make multiple calls (async)
         // NOTE destination does not have to be the customer it can be a http to WSL service , XML , one with custom security etc 
         var responses1 = transformAndCallService.Fire(jsonBody, metaData, destination, GetSecurityToken(), templateName: "quoteToCGUQuote");
+    }
+
+    private void BindResponse(JObject jsonBody, JObject metaData)
+    {
+        var storedData = idMappingService.GetOrUpdateID(integrationID, "CorelationId" + metaData["CorrelationId"], "ExternalPolicyId", jsonBody["ExternalPolicyId"].ToString());
+        jsonBody["QuoteId"] = storedData["QuoteID"].ToString();
+        jsonBody["PolicyId"] = storedData["PolicyId"].ToString();
+        var json = transformService.GetTransformedBody("policyBoundToMsg", jsonBody, metaData);
+
+        fireSNSEvent.Fire(json, "ExternalPolicyBound");
+        fireSNSEvent.Fire(transformService.GetTransformedBody("example of 1:2", jsonBody, metaData), "CustomerAddedPolicy");
+
+
     }
 
 

@@ -14,13 +14,11 @@ while (true)
         var aEvent = await queueReader.Read();
         var (jsonBody, metaData) = aEvent.AsJson();
 
-        var msgType = metaData["type"]?.ToString();  
+        var msgType = metaData["type"]?.ToString() ?? "unknown";  
 
         // all services receive event
-        customIntegrationService.Process((jsonBody, metaData, msgType));
-        configIntegrationService.Process((jsonBody, metaData , msgType));
-
-
+        customIntegrationService.Process(jsonBody, metaData, msgType);
+        configIntegrationService.Process(jsonBody, metaData , msgType);
 
         //if (stoppingCts.IsCancellationRequested)
         //    break;
