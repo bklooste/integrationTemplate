@@ -3,7 +3,7 @@ Console.WriteLine("Processing!");
 
 var queueReader = new QueueReader("aConnectionString");
 
-var customIntegrationService = new IntegrationMicroService();
+var customIntegrationService = new CGUIntegrationMicroService();
 var configIntegrationService = new ConfigIntegrationMicroService();
 
 //Ordered processing
