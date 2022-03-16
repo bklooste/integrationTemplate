@@ -11,6 +11,7 @@ internal class QueueReader
 
     internal Task<byte[]> Read()
     {
+        //its a event queue messages are processed as best effort
         throw new NotImplementedException();
     }
 }

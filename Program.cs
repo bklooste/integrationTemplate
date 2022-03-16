@@ -14,9 +14,11 @@ while (true)
         var aEvent = await queueReader.Read();
         var (jsonBody, metaData) = aEvent.AsJson();
 
+        var msgType = metaData["type"]?.ToString();  
+
         // all services receive event
-        customIntegrationService.Process((jsonBody, metaData));
-        configIntegrationService.Process((jsonBody, metaData));
+        customIntegrationService.Process((jsonBody, metaData, msgType));
+        configIntegrationService.Process((jsonBody, metaData , msgType));
 
 
 

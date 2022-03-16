@@ -11,6 +11,7 @@ internal class ConfigIntegrationMicroService
 
     IDMappingMicroService idMappingService = new IDMappingMicroService();
     TransfromAndCallMicroService transformAndCallService = new TransfromAndCallMicroService();
+
     IConfigurationRoot config;
 
     public ConfigIntegrationMicroService()
@@ -22,7 +23,7 @@ internal class ConfigIntegrationMicroService
     }
 
     // Can do this in batches if we want high performance 
-    internal void Process((JObject jsonBody, JObject metaData) policyUpdated)
+    internal void Process((JObject jsonBody, JObject metaData, string messageType           ) policyUpdated)
     {
         // important config is sequential 
         foreach ( var config in config.GetChildren())
@@ -33,10 +34,10 @@ internal class ConfigIntegrationMicroService
     {
         // our provider uses an identity for policy we need to map this . 
         //TODO config should have id maps  config["Configs"]["IdMaps"]
-        var ids = idMappingService.GetOrUpdateIDs(integrationID, ("policyId", jsonBody["policyId"].ToString()), ("customerId", jsonBody["customerID"].ToString()));
+        var ids = idMappingService.GetOrUpdateIDs(integrationID, metaData["CorrelationId"].ToString(), ("policyId", jsonBody["policyId"].ToString()), ("customerId", jsonBody["customerID"].ToString()));
 
         foreach (var id in ids)
-            metaData.Add(new JProperty(id.key, id.value));
+            metaData.Add(new JProperty(id.Key, id.Value));
 
 
         var responses1 = transformAndCallService.Fire(jsonBody, metaData, destination, GetSecurityToken(security), templateName);
